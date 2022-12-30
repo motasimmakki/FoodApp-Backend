@@ -29,6 +29,8 @@
                 let password = document.querySelector("input[type='password']").value;
 
                 let res_post = await axios.post('/auth/signup', {email, name, password});
+                // This log will be console on browsers console,
+                // as it is running in client side.
                 console.log(res_post);
             });
         </script>

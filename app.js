@@ -3,6 +3,8 @@ const app = express();
 app.use(express.json());
 const userRouter = express.Router();
 app.use('/auth', userRouter);
+const mongoose = require('mongoose');
+const { db_link } = require('./secrets');
 
 // Routing mini-app
 userRouter
@@ -34,6 +36,8 @@ function getSignup(req, res) {
 
 function postSignup(req, res) {
     let {email, name, password} = req.body;
+    // This log will be console on server terminal,
+    // as it is running in backend.
     console.log(req.body);
     res.json({
         msg: "User Signed Up!",
@@ -44,3 +48,48 @@ function postSignup(req, res) {
 app.listen(5000, 'localhost', () => {
     console.log("Server is listening on port no: 5000");
 });
+
+mongoose.set("strictQuery", false);
+mongoose.connect(db_link)
+.then((db) => {
+    console.log("DB Connected!");
+}).catch((err) => {
+    console.log(err);
+})
+
+const userSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true,
+        minLength: 7
+    },
+    confirmPassword: {
+        type: String,
+        required: true,
+        minLength: 7
+    }
+});
+
+// models
+const userModel = mongoose.model("userModel", userSchema);
+
+// IIFE (Immediately Invoked Function Expressing)
+(async function createUser() {
+    let user = {
+        name: "Ahkam",
+        email: "dev.ahkam@gmail.com",
+        password: "123qwerty",
+        confirmPassword: "123qwerty"
+    }
+    let data = await userModel.create(user);
+    console.log(data);
+})();
