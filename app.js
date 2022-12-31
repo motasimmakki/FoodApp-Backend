@@ -5,6 +5,7 @@ const userRouter = express.Router();
 app.use('/user', userRouter);
 const mongoose = require('mongoose');
 const { db_link } = require('./secrets');
+const emailValidator = require("email-validator");
 
 // Routing mini-app
 userRouter
@@ -35,7 +36,10 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        validate: function() {
+            return emailValidator.validate(this.email);
+        }
     },
     password: {
         type: String,
@@ -45,22 +49,40 @@ const userSchema = mongoose.Schema({
     confirmPassword: {
         type: String,
         required: true,
-        minLength: 7
+        minLength: 7,
+        validate: function() {
+            return (this.confirmPassword == this.password);
+        }
     }
 });
 
-// models
+// Mongoose Pre-hook.
+userSchema.pre('save', function() {
+    console.log("Before creating new user!");
+});
+
+// **Always write hook(middleware) 
+// before compiling the schema into model.
+
+// Mongoose Post-hook.
+userSchema.post('save', function() {
+    console.log("After creating new user!");
+});
+
+// Compiling a model from schema.
 const userModel = mongoose.model("userModel", userSchema);
 
-// IIFE (Immediately Invoked Function Expressing)
+// // IIFE (Immediately Invoked Function Expressing)
 // (async function createUser() {
 //     let user = {
-//         name: "Ahkam",
-//         email: "dev.ahkam@gmail.com",
+//         name: "Shiba",
+//         email: "dev.shiba@gmail.com",
 //         password: "123qwerty",
 //         confirmPassword: "123qwerty"
 //     }
+//     // Before creating new user! (using middleware)
 //     let data = await userModel.create(user);
+//     // After creating new user! (using middleware)
 //     console.log(data);
 // })();
 
@@ -110,8 +132,9 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
     let doc = await userModel.deleteOne(
-        {email: "okay.nice@gmail.com"}
+        {email: "dev.shiba@gmail.com"}
     );
+    console.log(doc);
     res.json({
         msg: "User data has been deleted Successfully!"
     });
