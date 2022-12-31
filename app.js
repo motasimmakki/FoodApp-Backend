@@ -3,9 +3,7 @@ const app = express();
 app.use(express.json());
 const userRouter = express.Router();
 app.use('/user', userRouter);
-const mongoose = require('mongoose');
-const { db_link } = require('./secrets');
-const emailValidator = require("email-validator");
+const { userModel } = require('./models/userModel');
 
 // Routing mini-app
 userRouter
@@ -16,69 +14,13 @@ userRouter
     .patch(updateUser)
     .delete(deleteUser);
 
-app.listen(5000, 'localhost', () => {
-    console.log("Server is listening on port no: 5000");
-});
-
-mongoose.set("strictQuery", false);
-mongoose.connect(db_link)
-.then((db) => {
-    console.log("DB Connected!");
-}).catch((err) => {
-    console.log(err);
-})
-
-const userSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        validate: function() {
-            return emailValidator.validate(this.email);
-        }
-    },
-    password: {
-        type: String,
-        required: true,
-        minLength: 7
-    },
-    confirmPassword: {
-        type: String,
-        required: true,
-        minLength: 7,
-        validate: function() {
-            return (this.confirmPassword == this.password);
-        }
-    }
-});
-
-// Mongoose Pre-hook.
-userSchema.pre('save', function() {
-    console.log("Before creating new user!");
-});
-
-// **Always write hook(middleware) 
-// before compiling the schema into model.
-
-// Mongoose Post-hook.
-userSchema.post('save', function() {
-    console.log("After creating new user!");
-});
-
-// Compiling a model from schema.
-const userModel = mongoose.model("userModel", userSchema);
-
 // // IIFE (Immediately Invoked Function Expressing)
 // (async function createUser() {
 //     let user = {
-//         name: "Shiba",
-//         email: "dev.shiba@gmail.com",
-//         password: "123qwerty",
-//         confirmPassword: "123qwerty"
+//         name: "ali",
+//         email: "ali.afzal@gmail.com",
+//         password: "qwerty123",
+//         confirmPassword: "qwerty123"
 //     }
 //     // Before creating new user! (using middleware)
 //     let data = await userModel.create(user);
@@ -139,3 +81,7 @@ async function deleteUser(req, res) {
         msg: "User data has been deleted Successfully!"
     });
 }
+
+app.listen(5000, 'localhost', () => {
+    console.log("Server is listening on port no: 5000");
+});
