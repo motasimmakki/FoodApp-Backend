@@ -11,7 +11,8 @@ userRouter
     .route("/")
     // .get(getSignup)
     .get(getUsers)
-    .post(postSignup);
+    .post(updateUser)
+    // .post(postSignup);
 
 app.listen(5000, 'localhost', () => {
     console.log("Server is listening on port no: 5000");
@@ -82,11 +83,26 @@ async function postSignup(req, res) {
     // let {email, name, password} = req.body;
     // This log will be console on server terminal,
     // as it is running in backend.
-    let data = req.body;
-    let user = await userModel.create(data);
-    console.log(data);
+    try {
+        let data = req.body;
+        let user = await userModel.create(data);
+        console.log(data);
+        res.json({
+            msg: "User Signed Up!",
+            user
+        });
+    } catch (err) {
+        res.json({err: err.message});
+    }
+}
+
+async function updateUser(req, res) {
+    let dataToBeUpdated = req.body;
+    let doc = await userModel.findOneAndUpdate(
+        {email: "okay@nice.com"},
+        dataToBeUpdated
+    );
     res.json({
-        msg: "User Signed Up!",
-        user
-    });
+        msg: "User Data Updated Successfully!"
+    })
 }
