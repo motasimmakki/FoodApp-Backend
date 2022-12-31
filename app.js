@@ -11,8 +11,9 @@ userRouter
     .route("/")
     // .get(getSignup)
     .get(getUsers)
-    .post(updateUser)
-    // .post(postSignup);
+    .post(postSignup)
+    .patch(updateUser)
+    .delete(deleteUser);
 
 app.listen(5000, 'localhost', () => {
     console.log("Server is listening on port no: 5000");
@@ -63,6 +64,10 @@ const userModel = mongoose.model("userModel", userSchema);
 //     console.log(data);
 // })();
 
+function getSignup(req, res) {
+    res.sendFile("public/index.html", {root: __dirname});
+}
+
 // Get all users from db.
 async function getUsers(req, res) {
     let allUsers = await userModel.find();
@@ -73,10 +78,6 @@ async function getUsers(req, res) {
         msg: "Users Data is retrieved",
         allUsers
     });
-}
-
-function getSignup(req, res) {
-    res.sendFile("public/index.html", {root: __dirname});
 }
 
 async function postSignup(req, res) {
@@ -99,10 +100,19 @@ async function postSignup(req, res) {
 async function updateUser(req, res) {
     let dataToBeUpdated = req.body;
     let doc = await userModel.findOneAndUpdate(
-        {email: "okay@nice.com"},
+        {email: "okay.nice@gmail.com"},
         dataToBeUpdated
     );
     res.json({
         msg: "User Data Updated Successfully!"
     })
+}
+
+async function deleteUser(req, res) {
+    let doc = await userModel.deleteOne(
+        {email: "okay.nice@gmail.com"}
+    );
+    res.json({
+        msg: "User data has been deleted Successfully!"
+    });
 }
