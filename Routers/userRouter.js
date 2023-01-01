@@ -1,6 +1,8 @@
 const express = require('express');
 const userRouter = express.Router();
 const { userModel } = require('../Models/userModel');
+const jwt = require('jsonwebtoken');
+const JWT_KEY = 'kuchBhiLikhloIdharButSameToVerify';
 
 // Routing mini-app
 userRouter
@@ -28,9 +30,16 @@ userRouter
 // Checking whether the user is signed in or NOT.
 // isAdmin cookie can be used to identify b/w user and Admin.
 async function protectRoute(req, res, next) {
-    console.log(req.cookies.isLoggedIn);
-    if(req.cookies.isLoggedIn) {
-        next();
+    let token = req.cookies.login;
+    if(token) {
+        let isVerified = jwt.verify(token, JWT_KEY);
+        if(isVerified) {
+            next();
+        } else {
+            res.json({
+                msg: "User NOT Verified"
+            });
+        }
     } else {
         res.json({
             msg: "Operation NOT allowed!"

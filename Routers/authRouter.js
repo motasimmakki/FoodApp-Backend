@@ -2,6 +2,8 @@ const express = require('express');
 const authRouter = express.Router();
 const { userModel } = require('../Models/userModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const JWT_KEY = 'kuchBhiLikhloIdharButSameToVerify';
 
 authRouter
     .route("/")
@@ -55,7 +57,12 @@ async function loginUser(req, res) {
             // [Need to use bcrypt - compare]
             bcrypt.compare(password, user.password, function(error, response) {
                 if(response) {
-                    res.cookie('isLoggedIn', true);
+                    // Using user's Unique Id as payload uid.
+                    let uid = user["_id"];
+                    // Creating Unique token for every user.
+                    let token = jwt.sign({ payload: uid}, JWT_KEY);
+                    // Setting token as login cookie.
+                    res.cookie('login', token);
                     res.json({
                         msg: "User is successfully LoggedIn!"
                     });
