@@ -55,6 +55,7 @@ async function loginUser(req, res) {
             // [Need to use bcrypt - compare]
             bcrypt.compare(password, user.password, function(error, response) {
                 if(response) {
+                    res.cookie('isLoggedIn', true);
                     res.json({
                         msg: "User is successfully LoggedIn!"
                     });
