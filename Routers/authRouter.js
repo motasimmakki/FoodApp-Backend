@@ -1,7 +1,7 @@
 const express = require('express');
 const authRouter = express.Router();
 const { userModel } = require('../Models/userModel');
-
+const bcrypt = require('bcrypt');
 
 authRouter
     .route("/")
@@ -37,20 +37,38 @@ async function postSignup(req, res) {
 async function loginUser(req, res) {
     try {
         let { email, password } = req.body;
+        if(!email) {
+            res.json({
+                err: "Kindly provide email"
+            })
+        }
+        if(!password) {
+            res.json({
+                err: "Kindly provide password"
+            })
+        }
         let user = await userModel.findOne({
             email: email
         })
         if(user) {
-            // Check if password is matching
-            if(password == user.password) {
-                res.json({
-                    msg: "User is successfully LoggedIn!"
-                });
-            } else {
-                res.json({
-                    msg: "Wrong password Entered!"
-                });
-            }
+            // Check if password is matching.
+            // [Need to use bcrypt - compare]
+            bcrypt.compare(password, user.password, function(error, response) {
+                if(response) {
+                    res.json({
+                        msg: "User is successfully LoggedIn!"
+                    });
+                } else {
+                    res.json({
+                        msg: "Wrong password Entered!"
+                    });
+                }
+                if(error) {
+                    res.json({
+                        err: error
+                    })
+                }
+            });
         } else {
             res.json({
                 msg: "User NOT found!"
