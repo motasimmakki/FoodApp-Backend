@@ -1,18 +1,30 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 app.use(express.json());
-const userRouter = express.Router();
-app.use('/user', userRouter);
+app.use(cookieParser());
 const { userModel } = require('./models/userModel');
+
+const userRouter = express.Router();
+const authRouter = express.Router();
+app.use('/user', userRouter);
+app.use('/auth', authRouter);
 
 // Routing mini-app
 userRouter
     .route("/")
-    // .get(getSignup)
     .get(getUsers)
-    .post(postSignup)
+    .post(postUser)
     .patch(updateUser)
     .delete(deleteUser);
+
+userRouter.route("/setcookies").get(setCookies);
+userRouter.route("/getcookies").get(getCookies);
+    
+authRouter
+    .route("/")
+    .get(getSignup)    
+    .post(postSignup)
 
 // // IIFE (Immediately Invoked Function Expressing)
 // (async function createUser() {
@@ -28,10 +40,7 @@ userRouter
 //     console.log(data);
 // })();
 
-function getSignup(req, res) {
-    res.sendFile("public/index.html", {root: __dirname});
-}
-
+// User routes.
 // Get all users from db.
 async function getUsers(req, res) {
     let allUsers = await userModel.find();
@@ -42,6 +51,41 @@ async function getUsers(req, res) {
         msg: "Users Data is retrieved",
         allUsers
     });
+}
+
+function postUser(req, res) {
+    // console.log(req.body);
+    user.push(req.body);
+    res.json({
+      message: "User data received successfully",
+      user: req.body,
+    });
+}
+
+async function updateUser(req, res) {
+    let dataToBeUpdated = req.body;
+    let doc = await userModel.findOneAndUpdate(
+        {email: "okay.nice@gmail.com"},
+        dataToBeUpdated
+    );
+    res.json({
+        msg: "User Data Updated Successfully!"
+    })
+}
+
+async function deleteUser(req, res) {
+    let doc = await userModel.deleteOne(
+        req.body
+    );
+    console.log(doc);
+    res.json({
+        msg: "User data has been deleted Successfully!"
+    });
+}
+
+// Auth routes.
+function getSignup(req, res) {
+    res.sendFile("public/index.html", {root: __dirname});
 }
 
 async function postSignup(req, res) {
@@ -61,25 +105,20 @@ async function postSignup(req, res) {
     }
 }
 
-async function updateUser(req, res) {
-    let dataToBeUpdated = req.body;
-    let doc = await userModel.findOneAndUpdate(
-        {email: "okay.nice@gmail.com"},
-        dataToBeUpdated
-    );
-    res.json({
-        msg: "User Data Updated Successfully!"
-    })
+function setCookies(req, res) {
+    // res.setHeader('Set-Cookie', "isLoggedIn=true");
+    
+    // maxAge: 1000 (cookie will expire after 1 sec)
+    // secure: true (this will make the cookie secure)
+    res.cookie('isLoggedIn', false, {maxAge: 10000, secure: true});
+    res.cookie('password', "1a2b3c4d5e6f", {maxAge: 10000, secure: true});
+    res.send("Cookie has been set!");
 }
 
-async function deleteUser(req, res) {
-    let doc = await userModel.deleteOne(
-        {email: "dev.shiba@gmail.com"}
-    );
-    console.log(doc);
-    res.json({
-        msg: "User data has been deleted Successfully!"
-    });
+function getCookies(req, res) {
+    let cookies = req.cookies;
+    console.log(cookies);
+    res.send("Cookie received!");
 }
 
 app.listen(5000, 'localhost', () => {
