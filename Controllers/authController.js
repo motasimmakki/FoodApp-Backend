@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const JWT_KEY = require('../helper');
+const { JWT_KEY } = require('../secrets');
 const { userModel } = require('../Models/userModel');
 
 // Auth routes.
@@ -22,7 +22,7 @@ const signup = async function(req, res) {
             });
         }
     } catch (err) {
-        res.json({err: err.message});
+        res.json({err: err.message });
     }
 }
 

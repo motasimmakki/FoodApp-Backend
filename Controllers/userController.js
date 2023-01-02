@@ -10,7 +10,7 @@ const getAllUsers = async function(req, res) {
             allUsers
         });
     } catch(err) {
-        res.json({ err: err });
+        res.json({ err: err.message });
     }
 }
 
@@ -18,7 +18,7 @@ const getAllUsers = async function(req, res) {
 const getUser = async function(req, res) {
     try {
         let id = req.id;
-        let user = await userModel.findOne(id);
+        let user = await userModel.findOne({ _id: id });
         if(user) {
             res.json({ 
                 msg: "User data is received!", 
@@ -32,7 +32,7 @@ const getUser = async function(req, res) {
         }
 
     } catch(err) {
-        res.json({ err: err });
+        res.json({ err: err.message });
     }
 }
 
@@ -67,7 +67,7 @@ const updateUser = async function(req, res) {
             })
         }
     } catch(err) {
-        res.json({ err: err});
+        res.json({ err: err.message });
     }
 }
 
@@ -86,7 +86,7 @@ const deleteUser = async function(req, res) {
             })
         }
     } catch(err) {
-        res.json({ err: err});
+        res.json({ err: err.message });
     }
 }
 

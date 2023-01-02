@@ -1,27 +1,31 @@
 const jwt = require('jsonwebtoken');
-const JWT_KEY = require('./secrets');
+const { JWT_KEY } = require('./secrets');
 const { userModel } = require('./Models/userModel');
 
 // Checking whether the user is signed in or NOT.
 // isAdmin cookie can be used to identify b/w user and Admin.
 const protectRoute = async function(req, res, next) {
-    let token = req.cookies.login;
-    if(token) {
-        let payloadObj = jwt.verify(token, JWT_KEY);
-        let user = await userModel.findById(payloadObj.payload);
-        if(user) {
-            req.id = user.id;
-            req.role = user.role;
-            next();
+    try {
+        let token = req.cookies.login;
+        if(token) {
+            let payloadObj = jwt.verify(token, JWT_KEY);
+            let user = await userModel.findById(payloadObj.payload);
+            if(user) {
+                req.id = user.id;
+                req.role = user.role;
+                next();
+            } else {
+                res.json({
+                    msg: "User NOT Verified"
+                });
+            }
         } else {
             res.json({
-                msg: "User NOT Verified"
-            });
+                msg: "Operation NOT allowed!"
+            })
         }
-    } else {
-        res.json({
-            msg: "Operation NOT allowed!"
-        })
+    } catch(err) {
+        res.json({ msg: err.message });
     }
 }
 
@@ -35,7 +39,7 @@ const isAuthorized = function(roles) {
         } else {
             // status 401: unauthorized access.
             res.status(401).json({
-                msg: "Operation NOT allowed!"
+                msg: "Role invalid!"
             })
         }
     }

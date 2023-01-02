@@ -26,13 +26,13 @@ userRouter
 // Profile page.
 userRouter.use(protectRoute); // Middleware for checking authentication.
 userRouter
-    .route("/userProfile")
+    .route("/profile")
     .get(getUser);
 
 // Admin Specific functions.
-userRouter.use(isAuthorized(['Admin'])); // Middleware for checking authorization.
+userRouter.use(isAuthorized(['admin'])); // Middleware for checking authorization.
 userRouter
-    .route("")
+    .route("/")
     .get(getAllUsers);
 
 module.exports = userRouter;
