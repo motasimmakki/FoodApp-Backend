@@ -90,9 +90,55 @@ const deleteUser = async function(req, res) {
     }
 }
 
+const forgetpassword = async function(req, res) {
+    let { email } = req.body;
+    try {
+        let user = await userModel.find({ email: email });
+        if(user) {
+            // create reset token.
+            const resetToken = user.createResetToken();
+            // create reset link. | https://xyz.com/resetPassword/resetToken
+            let resetPasswordLink = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
+            // send email to user. | using nodemailer
+
+            // db save
+        } else {
+            res.json({
+                msg: "User NOT found!"
+            })
+        }
+    } catch(err) {
+        res.status(500).json({ err: err.message });
+    }
+}
+
+const resetpassword = async function(req, res) {
+    const token = req.params.token;
+    let { password, confirmPassword } = req.body;
+    try {
+        const user = await userModel.find({ resetToken: token });
+        if(user) {
+            // resetPasswordHandler() will update user in db.
+            user.resetPasswordHandler(password, confirmPassword);
+            await user.save();
+            res.json({
+                msg: "Password changed successfully!"
+            })
+        } else {
+            res.json({
+                msg: "User NOT found!"
+            })
+        }
+    } catch(err) {
+        res.status(500).json({ err: err.message });
+    }
+}
+
 module.exports = {
     getAllUsers, 
     getUser,
     updateUser, 
-    deleteUser
+    deleteUser,
+    forgetpassword,
+    resetpassword
 }

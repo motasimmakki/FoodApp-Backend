@@ -2,7 +2,8 @@ const express = require('express');
 const userRouter = express.Router();
 const {
     getAllUsers, getUser, 
-    updateUser, deleteUser
+    updateUser, deleteUser,
+    forgetpassword, resetpassword
 } = require('../Controllers/userController');
 const { signup, login } = require('../Controllers/authController');
 const { protectRoute, isAuthorized } = require('../helper');
@@ -22,6 +23,9 @@ userRouter
 userRouter
     .route("/signup")
     .post(signup);
+
+userRouter.route("/forgetpassword").post(forgetpassword);
+userRouter.route("/resetpassword/:token").post(resetpassword);
 
 // Profile page.
 userRouter.use(protectRoute); // Middleware for checking authentication.
