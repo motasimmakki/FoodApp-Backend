@@ -1,36 +1,29 @@
 const express = require('express');
 const userRouter = express.Router();
 const {
-    getUsers, 
-    getUserById, 
-    postUser, 
+    getAllUsers, 
+    getUser, 
     updateUser, 
     deleteUser
 } = require('../Controllers/userController');
 const { protectRoute } = require('../helper');
 
-// Routing mini-app
+// user desired options.
 userRouter
-    .route("/")
-    .get(protectRoute, getUsers)
-    .post(postUser)
+    .route("/:id")
     .patch(updateUser)
     .delete(deleteUser);
 
-// --------> Routes for setting & getting cookies <--------------
-// userRouter
-//     .route("/setcookies")
-//     .get(setCookies);
-
-// userRouter
-//     .route("/getcookies")
-//     .get(getCookies);
-
-/**
- * Always write dynamic routes in the end.
- */
+// Profile page.
+app.use(protectRoute);
 userRouter
-    .route("/:name")
-    .get(getUserById);
+    .route("/userProfile")
+    .get(getUser);
+
+// Admin Specific functions.
+app.use(isAuthorised(['Admin']));
+userRouter
+    .route("")
+    .get(getAllUsers);
 
 module.exports = userRouter;

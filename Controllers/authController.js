@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const JWT_KEY = require('../helper');
-const userModel = require('../Models/userModel');
+const { userModel } = require('../Models/userModel');
 
 // Auth routes.
 const getSignup = function(req, res) {
