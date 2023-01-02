@@ -17,7 +17,7 @@ const getAllUsers = async function(req, res) {
 // Getting specific user.
 const getUser = async function(req, res) {
     try {
-        let id = req.params.id;
+        let id = req.id;
         let user = await userModel.findOne(id);
         if(user) {
             res.json({ 

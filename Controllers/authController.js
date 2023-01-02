@@ -4,28 +4,29 @@ const JWT_KEY = require('../helper');
 const { userModel } = require('../Models/userModel');
 
 // Auth routes.
-const getSignup = function(req, res) {
-    res.sendFile("public/index.html", {root: __dirname});
-}
-
-const postSignup = async function(req, res) {
-    // let {email, name, password} = req.body;
-    // This log will be console on server terminal,
-    // as it is running in backend.
+const signup = async function(req, res) {
     try {
-        let data = req.body;
+        let data = req.body; // name, email, & password
+        // This log will be console on server terminal,
+        // as it is running in backend.
+        // console.log(data);
         let user = await userModel.create(data);
-        console.log(data);
-        res.json({
-            msg: "User Signed Up!",
-            user
-        });
+        if(user) {
+            res.json({
+                msg: "User Signed Up!",
+                user
+            });
+        } else {
+            res.json({
+                msg: "User could not be signed Up!"
+            });
+        }
     } catch (err) {
         res.json({err: err.message});
     }
 }
 
-const loginUser = async function(req, res) {
+const login = async function(req, res) {
     try {
         let { email, password } = req.body;
         if(!email) {
@@ -79,7 +80,6 @@ const loginUser = async function(req, res) {
 }
 
 module.exports = {
-    getSignup,
-    postSignup, 
-    loginUser
+    signup, 
+    login
 }

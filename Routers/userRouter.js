@@ -1,12 +1,11 @@
 const express = require('express');
 const userRouter = express.Router();
 const {
-    getAllUsers, 
-    getUser, 
-    updateUser, 
-    deleteUser
+    getAllUsers, getUser, 
+    updateUser, deleteUser
 } = require('../Controllers/userController');
-const { protectRoute } = require('../helper');
+const { signup, login } = require('../Controllers/authController');
+const { protectRoute, isAuthorized } = require('../helper');
 
 // user desired options.
 userRouter
@@ -14,14 +13,24 @@ userRouter
     .patch(updateUser)
     .delete(deleteUser);
 
+// For login old user.
+userRouter
+    .route("/login")
+    .post(login);
+
+// For signup new user.
+userRouter
+    .route("/signup")
+    .post(signup);
+
 // Profile page.
-app.use(protectRoute);
+userRouter.use(protectRoute); // Middleware for checking authentication.
 userRouter
     .route("/userProfile")
     .get(getUser);
 
 // Admin Specific functions.
-app.use(isAuthorised(['Admin']));
+userRouter.use(isAuthorized(['Admin'])); // Middleware for checking authorization.
 userRouter
     .route("")
     .get(getAllUsers);
