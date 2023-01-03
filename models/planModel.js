@@ -16,7 +16,7 @@ const planSchema = mongoose.Schema({
         unique: true,
         // For better error handling message.
         maxLength: [20, 
-            `Plan name should NOT exceed ${this.maxLength} characters!`]
+            `Plan name should NOT exceed 20 characters!`]
     },
     duration: {
         type: Number,

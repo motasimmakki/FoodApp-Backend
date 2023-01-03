@@ -1,9 +1,36 @@
 const express = require('express');
 const planRouter = express.Router();
-const { create } = require('../Controllers/planController');
+const { 
+    create, updatePlan,
+    deletePlan, getPlan,
+    getAllPlan, getTop3Plan
+} = require('../Controllers/planController');
+const { protectRoute, isAuthorized } = require('../helper');
 
 planRouter
-    .route("/create")
+    .route("/allPlans")
+    .get(getAllPlan);
+
+planRouter.use(protectRoute); // checks isLoggedIn?
+planRouter
+    .route("/:id")
+    .get(getPlan);
+
+planRouter.use(
+    // checks isLoggedIn with role?
+    isAuthorized(['admin', 'restaurant_owner'])
+);
+planRouter
+    .route("/crudPlan")
     .post(create);
+
+planRouter
+    .route("/crudPlan/:id")
+    .patch(updatePlan)
+    .delete(deletePlan);
+
+// planRouter
+//     .route("")
+//     .get(getTop3Plan);
 
 module.exports = planRouter;
