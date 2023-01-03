@@ -25,6 +25,18 @@ const updatePlan = async function(req, res) {
         let plan = await planModel.findById({ _id: id });
         if(plan) {
             // do stuffs to update.
+            let dataToBeUpdated = req.body;
+            let keys = [];
+            for(let key in dataToBeUpdated) {
+                keys.push(key);
+            }
+            for(let i = 0; i < keys.length; i++) {
+                plan[keys[i]] = dataToBeUpdated[keys[i]]
+            }
+            await plan.save();
+            res.json({ 
+                msg: "Plan updated successfully!" 
+            });    
         } else {
             res.json({ 
                 msg: "Plan NOT found!" 
@@ -91,7 +103,18 @@ const getAllPlan = async function(req, res) {
 }
 
 const getTop3Plan = async function(req, res) {
+    try {
+        let plans = await planModel.find();
+        if(plans) {
 
+        } else {
+            res.json({ 
+                msg: "Plans NOT found!" 
+            });    
+        }
+    } catch(err) {
+        res.json({ err: err.message });
+    }
 }
 
 module.exports = {

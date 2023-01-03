@@ -8,6 +8,10 @@ const {
 const { protectRoute, isAuthorized } = require('../helper');
 
 planRouter
+    .route("/")
+    .get(getTop3Plan);
+    
+planRouter
     .route("/allPlans")
     .get(getAllPlan);
 
@@ -28,9 +32,5 @@ planRouter
     .route("/crudPlan/:id")
     .patch(updatePlan)
     .delete(deletePlan);
-
-// planRouter
-//     .route("")
-//     .get(getTop3Plan);
 
 module.exports = planRouter;
