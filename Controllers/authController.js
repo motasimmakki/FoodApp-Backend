@@ -79,7 +79,15 @@ const login = async function(req, res) {
     }
 }
 
+const logout = function(req, res) {
+    res.cookie('login', '', { maxAge: 1 });
+    res.json({
+        msg: "User logged out successfully!"
+    });
+}
+
 module.exports = {
     signup, 
-    login
+    login,
+    logout
 }

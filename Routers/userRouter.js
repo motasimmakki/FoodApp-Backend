@@ -5,7 +5,7 @@ const {
     updateUser, deleteUser,
     forgetpassword, resetpassword
 } = require('../Controllers/userController');
-const { signup, login } = require('../Controllers/authController');
+const { signup, login, logout } = require('../Controllers/authController');
 const { protectRoute, isAuthorized } = require('../helper');
 
 // user desired options.
@@ -19,13 +19,23 @@ userRouter
     .route("/login")
     .post(login);
 
+// For logout current login user.
+userRouter
+    .route("/logout")
+    .get(logout);
+
 // For signup new user.
 userRouter
     .route("/signup")
     .post(signup);
 
-userRouter.route("/forgetpassword").post(forgetpassword);
-userRouter.route("/resetpassword/:token").post(resetpassword);
+userRouter
+    .route("/forgetpassword")
+    .post(forgetpassword);
+
+userRouter
+    .route("/resetpassword/:token")
+    .post(resetpassword);
 
 // Profile page.
 userRouter.use(protectRoute); // Middleware for checking authentication.
