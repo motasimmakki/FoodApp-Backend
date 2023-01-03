@@ -5,8 +5,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 const userRouter = require('./Routers/userRouter');
+const planRouter = require('./Routers/planRouter');
 
 app.use('/user', userRouter);
+app.use('/plan', planRouter);
 
 // // IIFE (Immediately Invoked Function Expressing),
 // for creating new user in DB.

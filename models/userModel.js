@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 mongoose.set("strictQuery", false);
 mongoose.connect(db_link)
 .then((db) => {
-    console.log("DB Connected!");
+    console.log("User DB Connected!");
 }).catch((err) => {
     console.log(err);
 })
@@ -96,4 +96,4 @@ userSchema.methods.resetPasswordHandler = function(password, confirmPassword) {
 // Compiling a model from schema.
 const userModel = mongoose.model("userModel", userSchema);
 
-module.exports = { userModel };
+module.exports = { userModel }
