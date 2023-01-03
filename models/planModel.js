@@ -33,7 +33,12 @@ const planSchema = mongoose.Schema({
         }, `Discount cannot be 100%!`]
     }, 
     ratingAverage: {
-        type: Number
+        type: Number,
+        default: 0
+    },
+    noOfRatings: {
+        type: Number,
+        default: 0
     }
 });
 
