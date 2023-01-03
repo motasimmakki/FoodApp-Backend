@@ -104,9 +104,14 @@ const getAllPlan = async function(req, res) {
 
 const getTop3Plan = async function(req, res) {
     try {
-        let plans = await planModel.find();
-        if(plans) {
-
+        let topPlans = await planModel.find().sort(
+            { ratingAverage: -1}
+        ).limit(3);
+        if(topPlans) {
+            res.json({ 
+                msg: "Top plans received!",
+                topPlans
+            });
         } else {
             res.json({ 
                 msg: "Plans NOT found!" 
