@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment Demo</title>
+</head>
+<body>
+    <h2>Welcome to Stripe Payment gateway!</h2>
+    <!-- Hard coded for testing -->
+    <form action="createSession" method="post">
+        <button type="submit" id="checkout-button">Checkout</button>
+        <script src="//checkout.stript.com/v2/checkout.js"
+        class="stript-button"
+        data-key="pk_test_51MMTvvSF0bCqMCc8XPlEyfV4fddo4mIiSP3SAfDIwi5jHaAumgeoOVoA2AxH1NuBSq5N3Dtb8ZwtNe3ySki4Pn1100AbXODBcg"
+        data-amount="700"
+        data-currency="usd"
+        data-name="foodApp">
+
+        </script>
+    </form>
+</body>
+</html>
