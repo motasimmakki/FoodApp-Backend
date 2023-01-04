@@ -42,7 +42,10 @@ const getAllReviews = async function(req, res) {
 const getPlanReview = async function(req, res) {
     try {
         let planId = req.params.plan;
-        let planReviews = await reviewModel.findById(planId);
+        let allReviews = await reviewModel.find();
+        let planReviews = allReviews.filter((review) => {
+            return review.plan["_id"] == planId;
+        })
         if(planReviews) {
             res.json({
                 msg: "Plan reviews are retrieved!",
@@ -65,7 +68,7 @@ const createReview = async function(req, res) {
         let review = req.body;
         let postReview = await reviewModel.create(review);
         if(postReview) {
-            plan.ratingAverage = (plan.ratingAverage * plan.noOfRatings + req.body.rating) / (plan.noOfRatings + 1);
+            plan.ratingAverage = (plan.ratingAverage * plan.noOfRatings + review.rating) / (plan.noOfRatings + 1);
             plan.noOfRatings += 1;
             await plan.save();
             res.json({
@@ -87,12 +90,26 @@ const updateReview = async function(req, res) {
         let planId = req.params.plan;
         // Which review need to be updated.
         let id = req.params.id;
-        let review = await reviewModel.findById(planId);
+        let review = await reviewModel.findById(id);
         if(review) {
             let dataToBeUpdated = req.body;
             let keys = [];
             for(key in dataToBeUpdated) {
+                if(key == id) continue;
                 keys.push(key);
+            }
+            // if key includes "rating":
+            // Need to use review's rating to calculate average rating,
+            // and update in plan.
+            if(keys.includes("rating")) {
+                const plan = await planModel.findById(planId);
+                if(plan.ratingAverage > 0) {
+                    let oldRating = review.rating;
+                    plan.ratingAverage = (plan.ratingAverage * plan.noOfRatings + Math.abs(dataToBeUpdated.rating - oldRating)) / plan.noOfRatings;
+                } else {
+                    plan.ratingAverage = dataToBeUpdated.rating;
+                }
+                await plan.save();
             }
             for(let i = 0; i < keys.length; i++) {
                 review[keys[i]] = dataToBeUpdated[keys[i]];
@@ -114,9 +131,21 @@ const updateReview = async function(req, res) {
 const deleteReview = async function(req, res) {
     try {
         let planId = req.params.plan;
-        let doc = await reviewModel.findByIdAndDelete(planId);
-        if(doc) {
-            res.json({
+        let id = req.params.id;
+        // Need to change average rating of plan,
+        // on delete or particular review.
+        let deletedReview = await reviewModel.findByIdAndDelete(id);
+        if(deletedReview) {
+            const plan = await planModel.findById(planId);
+            if(plan.noOfRatings <= 1) {
+                plan.ratingAverage = 0;
+                plan.noOfRatings = 0;
+            } else {
+                plan.ratingAverage = (plan.ratingAverage * plan.noOfRatings - deletedReview.rating) / (plan.noOfRatings - 1);
+                plan.noOfRatings -= 1;
+            }
+            await plan.save();
+            res.json({  
                 msg: "Review deleted successfully!"
             })
         } else {

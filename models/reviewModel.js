@@ -27,12 +27,12 @@ const reviewSchema = mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.ObjectId,
-        ref: "userModel",
+        ref: 'userModel',
         required: [true, `Review must belong to a user!`]
     },
-    user: {
+    plan: {
         type: mongoose.Schema.ObjectId,
-        ref: "planModel",
+        ref: 'planModel',
         required: [true, `Plan must belong to a user!`]
     }
 });
@@ -47,8 +47,8 @@ reviewSchema.pre(/^find/, function(next) {
         // which field we wanna populate.
         path: 'user',
         // what fields we want, we provide it in select.
-        select: "name profileImage"
-    }).populate("plan");
+        select: 'name profileImage'
+    }).populate('plan');
     next();
 });
 
