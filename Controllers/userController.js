@@ -94,7 +94,7 @@ const deleteUser = async function(req, res) {
 const forgetpassword = async function(req, res) {
     let { email } = req.body;
     try {
-        let user = await userModel.find({ email: email });
+        let user = await userModel.findOne({ email: email });
         if(user) {
             // create reset token.
             const resetToken = user.createResetToken();
@@ -103,6 +103,9 @@ const forgetpassword = async function(req, res) {
             // send email to user. | using nodemailer
             await sendMail("forgetpassword", { email, resetPasswordLink });
             // db save
+            res.json({
+                msg: "E-mail sent successfully!"
+            })
         } else {
             res.json({
                 msg: "User NOT found!"
