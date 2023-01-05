@@ -1,4 +1,5 @@
 const { userModel } = require('../Models/userModel');
+const { sendMail } = require('../utility/nodemailer');
 
 // User routes.
 // Getting data of all users.
@@ -100,7 +101,7 @@ const forgetpassword = async function(req, res) {
             // create reset link. | https://xyz.com/resetPassword/resetToken
             let resetPasswordLink = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
             // send email to user. | using nodemailer
-
+            await sendMail("forgetpassword", { email, resetPasswordLink });
             // db save
         } else {
             res.json({

@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { JWT_KEY } = require('../secrets');
 const { userModel } = require('../Models/userModel');
+const { sendMail } = require('../utility/nodemailer');
 
 // Auth routes.
 const signup = async function(req, res) {
@@ -12,6 +13,8 @@ const signup = async function(req, res) {
         // console.log(data);
         let user = await userModel.create(data);
         if(user) {
+            // Send welcome mail | using nodemailer
+            await sendMail("signup", user);
             res.json({
                 msg: "User Signed Up!",
                 user
