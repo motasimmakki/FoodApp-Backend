@@ -79,9 +79,11 @@ userSchema.pre('save', async function() {
     // console.log(hashedString);
 });
 
-userSchema.methods.createResetToken = function() {
+userSchema.methods.createResetToken = async function() {
     const resetToken = uuidv4();
     this.resetToken = resetToken;
+    this.confirmPassword = this.password;
+    await this.save();
     return resetToken;
 }
 

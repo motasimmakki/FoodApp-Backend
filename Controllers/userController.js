@@ -97,9 +97,9 @@ const forgetpassword = async function(req, res) {
         let user = await userModel.findOne({ email: email });
         if(user) {
             // create reset token.
-            const resetToken = user.createResetToken();
+            const resetToken = await user.createResetToken();
             // create reset link. | https://xyz.com/resetPassword/resetToken
-            let resetPasswordLink = `${req.protocol}://${req.get('host')}/resetpassword/${resetToken}`;
+            let resetPasswordLink = `${req.protocol}://${req.get('host')}/user/resetpassword/${resetToken}`;
             // send email to user. | using nodemailer
             await sendMail("forgetpassword", { email, resetPasswordLink });
             // db save
@@ -120,7 +120,7 @@ const resetpassword = async function(req, res) {
     const token = req.params.token;
     let { password, confirmPassword } = req.body;
     try {
-        const user = await userModel.find({ resetToken: token });
+        const user = await userModel.findOne({ resetToken: token });
         if(user) {
             // resetPasswordHandler() will update user in db.
             user.resetPasswordHandler(password, confirmPassword);
