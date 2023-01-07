@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const { googleAppPassword } = require("../secrets");
+
 
 // async..await is not allowed in global scope, must use a wrapper
 const sendMail = async function(context, user) {
@@ -11,7 +13,7 @@ const sendMail = async function(context, user) {
             secure: false, // true for 465, false for other ports
             auth: {
             user: "makkimotasim@gmail.com", // Setting sender's email
-            pass: "cenjywaueqfouhyv", // App password from google account
+            pass: googleAppPassword, // App password from google account
             },
         });
         let email_subject = "", email_html = "";
